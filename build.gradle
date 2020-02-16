@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.2.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id 'jacoco'
 }
 
 group = 'com.mtronci'
@@ -13,7 +14,6 @@ repositories {
 }
 
 dependencies {
-dependencies {
 	testCompile 'junit:junit:4.12'
     compile 'junit:junit:4.12'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -21,8 +21,17 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 }
-}
 
 test {
 	useJUnitPlatform()
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.2
+			}
+		}
+	}
 }
