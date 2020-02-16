@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
 	id 'jacoco'
+	id 'checkstyle'
 }
 
 group = 'com.mtronci'
@@ -20,6 +21,9 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+	// https://mvnrepository.com/artifact/com.puppycrawl.tools/checkstyle
+	compile group: 'com.puppycrawl.tools', name: 'checkstyle', version: '8.26'
+
 }
 
 test {
@@ -34,4 +38,43 @@ jacocoTestCoverageVerification {
 			}
 		}
 	}
+}
+
+checkstyle {
+
+  project.ext.checkstyleVersion = '8.29'
+  project.ext.sevntuChecksVersion = '1.37.1'
+
+  repositories {
+    mavenCentral()
+    // we keep artifacts in maven central too,
+    // but this is just example of usage from our old maven repo on github
+    maven {
+      url "http://sevntu-checkstyle.github.com/sevntu.checkstyle/maven2"
+    }
+  }
+
+  ignoreFailures = true
+  configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+
+  //sourceSets = [sourceSets.main]
+  //showViolations = true
+  //reportsDir = file("$project.buildDir/checkstyleReports")
+  //configProperties = ['baseDir': "$project.projectDir"]
+
+  //https://discuss.gradle.org/t/some-checkstyle-rules-dont-work-in-gradle/16102/4
+  checkstyleMain {
+    source = sourceSets.main.allSource
+  }
+
+  configurations {
+    checkstyle
+  }
+
+  dependencies{
+    assert project.hasProperty("checkstyleVersion")
+
+    checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
+    checkstyle "com.github.sevntu-checkstyle:sevntu-checks:${sevntuChecksVersion}"
+  }
 }
